@@ -33,11 +33,8 @@ def dist(a, b):
   return math.sqrt((b[1]-a[1])**2 + (b[0]-a[0])**2)
 
 def traverse(pos, grid, visited={}):
-  print(pos)
-  if pos in visited.keys() and visited[pos][0] is not None:
+  if pos in visited.keys():
     return visited[pos]
-  if pos in visited.keys() and visited[pos][0] is None:
-    return (None, None)
 
   if grid.get_position(pos) == terminal_space:
     return (0, [])
