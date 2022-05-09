@@ -39,28 +39,61 @@ def plot_grid():
 
 def print_arr(arr):
   for r in range(len(arr)):
+    print("[", end=" ")
     for c in arr[r]:
       print(c, end="  ")
-    print()
+    print("]")
 
 class Grid:
   def __init__(self):
-    self.grid = plot_grid()
+    v = valid_space
+    x = invalid_space
+    t = terminal_space
+    g = [
+      [v, x, x, x],
+      [x, v, x, x],
+      [t, x, t, x]
+    ]
+    self.grid = self.rotate(g)
+
+    print_arr(g)
+
+  def rotate(self, grid):
+    g = []
+    for j in range(len(grid[0])):
+      g.append([])
+      for i in range(len(grid)):
+        g[j].append(grid[len(grid)-i-1][j])
+    return g
+
+  def list_nodes(self):
+    out = []
+    for i in range(len(self.grid)):
+      for j in range(len(self.grid[i])):
+        out.append((i, j))
+    return out
+
 
   def set_terminal(self, pos):
-    self.grid[len(self.grid)-pos[1]-1][pos[0]] = terminal_space
+    self.grid[pos[0]][pos[1]] = terminal_space
 
   def get_position(self, pos):
     if not self.is_valid(pos):
       return None
-    return self.grid[len(self.grid)-pos[1]-1][pos[0]]
+    return self.grid[pos[0]][pos[1]]
+
+  def set_position(self, pos, val):
+    if not self.is_valid(pos):
+      return None
+    self.grid[pos[0]][pos[1]] = val
 
   def is_valid(self, pos):
-    if pos[1] < 0 or pos[1] >= len(self.grid):
+    if pos[0] < 0 or pos[0] >= len(self.grid):
       return False
-    if pos[0] < 0 or pos[0] >= len(self.grid[pos[1]]):
+    if pos[1] < 0 or pos[1] >= len(self.grid[pos[0]]):
       return False
-    return self.grid[len(self.grid)-pos[1]-1][pos[0]] != invalid_space
+
+    return True
   
   def print(self):
     print_arr(self.grid)

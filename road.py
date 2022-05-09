@@ -1,31 +1,18 @@
 from operator import itemgetter
 from grid import *
+import sys
 
 def valid_moves(pos, grid):
-  moves = []
-  # left and right
-  if grid.is_valid((pos[0]-1, pos[1])):
-    moves.append((pos[0]-1, pos[1]))
-  if grid.is_valid((pos[0]+1, pos[1])):
-    moves.append((pos[0]+1, pos[1]))
+  out = []
 
-  # forward and back
-  if grid.is_valid((pos[0], pos[1]-1)):
-    moves.append((pos[0], pos[1]-1))
-  if grid.is_valid((pos[0], pos[1]+1)):
-    moves.append((pos[0], pos[1]+1))
+  rows = [pos[0]-1, pos[0], pos[0]+1]
+  cols = [pos[1]-1, pos[0], pos[0]+1]
+  for r in rows:
+    for c in cols:
+      if grid.get_position((r, c)) != invalid_space and grid.get_position((r, c)) != None:
+        out.append((r, c))
 
-  # diagonals
-  if grid.is_valid((pos[0]-1, pos[1]-1)):
-    moves.append((pos[0]-1, pos[1]-1))
-  if grid.is_valid((pos[0]-1, pos[1]+1)):
-    moves.append((pos[0]-1, pos[1]+1))
-  if grid.is_valid((pos[0]+1, pos[1]+1)):
-    moves.append((pos[0]+1, pos[1]+1))
-  if grid.is_valid((pos[0]+1, pos[1]-1)):
-    moves.append((pos[0]+1, pos[1]-1))
-
-  return moves
+  return out
 
 def dist(a, b):
   if a is None or b is None:
@@ -33,6 +20,7 @@ def dist(a, b):
   return math.sqrt((b[1]-a[1])**2 + (b[0]-a[0])**2)
 
 def traverse(pos, grid, visited={}):
+  print(pos)
   if pos in visited.keys():
     return visited[pos]
 
@@ -62,13 +50,54 @@ def traverse(pos, grid, visited={}):
   visited[pos] = (shortest_len, shortest_path)
   return (shortest_len, shortest_path)
 
+def find_terminal(start, grid, path=[]):
+  q = [(start, 0)]
+  for e in q:
+    print(e[0], grid.get_position(e[0]))
+    if grid.get_position(e[0]) == terminal_space:
+      return e[1]
+
+    moves = valid_moves(e[0], grid)
+    for m in moves:
+      if grid.get_position(m) != invalid_space:
+        q.append((m, e[1]+1))
+        grid.set_position(e[0], invalid_space)
+
+  return None
+
+def dijkstra(start, grid):
+  shortest_path = {}
+  previous_nodes = {}
+
+  unvisited_nodes = grid.list_nodes()
+  for node in unvisited_nodes:
+    shortest_path[node] = sys.maxsize
+  shortest_path[start] = 0
+
+  path = []
+
+  while unvisited_nodes:
+    min_node = None
+    for node in unvisited_nodes:
+      if min_node == None or shortest_path[node] < shortest_path[min_node]:
+        min_node = node
+    
+    moves = valid_moves(min_node, grid)
+    for m in moves:
+      d = shortest_path[min_node] + dist(min_node, m)
+      if d < shortest_path[m]:
+        shortest_path[m] = d
+        previous_nodes[m] = min_node
+
+    unvisited_nodes.remove(min_node)
+
+  return previous_nodes, shortest_path
+
 if __name__ == "__main__":
   grid = Grid()
 
-  start = (13, 7)
-  grid.set_terminal((17, 7))
-  print()
-  l, traversal = traverse(start, grid)
-  print(l)
-  grid.show_traversal(start, traversal)
+  start = (0, 2)
+  grid.set_terminal((2, 0))
+  # print()
+  print(dijkstra(start, grid)[1][(2, 0)])
 
