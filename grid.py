@@ -8,6 +8,9 @@ valid_space = "o"
 terminal_space = "^"
 visited_space = "x"
 
+x_bounds = (0, 60)
+y_bounds = (0, 30)
+
 # def upper(x):
 #   return (-(1/4)*(x-4)**2) + 4
 
@@ -21,8 +24,8 @@ def lower(x):
   return 10*np.cos(0.2*x)+10
 
 def plot_grid():
-  x_range = range(0, 18)
-  y_range = range(0, 8)
+  x_range = range(x_bounds[0], x_bounds[1]+1)
+  y_range = range(y_bounds[0], y_bounds[1]+1)
 
   grid = []
   for y in y_range:
@@ -46,17 +49,20 @@ def print_arr(arr):
 
 class Grid:
   def __init__(self):
-    v = valid_space
-    x = invalid_space
-    t = terminal_space
-    g = [
-      [v, x, x, x],
-      [x, v, x, x],
-      [t, x, t, x]
-    ]
+    # v = valid_space
+    # x = invalid_space
+    # t = terminal_space
+    # g = [
+    #   [v, x, x, x],
+    #   [x, v, x, x],
+    #   [t, x, t, x]
+    # ]
+    
+
+    g = plot_grid()
+
     self.grid = self.rotate(g)
 
-    print_arr(g)
 
   def rotate(self, grid):
     g = []
@@ -98,10 +104,8 @@ class Grid:
   def print(self):
     print_arr(self.grid)
 
-  def show_traversal(self, start, traversed_path):
-    traversed_path.insert(0, start)
-
-    x = np.arange(10.0, 20, 0.1)
+  def show_traversal(self, traversed_path):
+    x = np.arange(x_bounds[0], x_bounds[1], 0.1)
     y1 = lower(x)
     y2 = upper(x)
 

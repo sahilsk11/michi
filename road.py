@@ -6,7 +6,7 @@ def valid_moves(pos, grid):
   out = []
 
   rows = [pos[0]-1, pos[0], pos[0]+1]
-  cols = [pos[1]-1, pos[0], pos[0]+1]
+  cols = [pos[1]-1, pos[1], pos[1]+1]
   for r in rows:
     for c in cols:
       if grid.get_position((r, c)) != invalid_space and grid.get_position((r, c)) != None:
@@ -74,8 +74,6 @@ def dijkstra(start, grid):
     shortest_path[node] = sys.maxsize
   shortest_path[start] = 0
 
-  path = []
-
   while unvisited_nodes:
     min_node = None
     for node in unvisited_nodes:
@@ -93,11 +91,30 @@ def dijkstra(start, grid):
 
   return previous_nodes, shortest_path
 
+def get_traversal(prev_nodes, start, end):
+  path = []
+  node = end
+  
+  while node != start:
+    path.append(node)
+    node = prev_nodes[node]
+
+  # Add the start node manually
+  path.append(start)
+  return path
+
 if __name__ == "__main__":
   grid = Grid()
 
-  start = (0, 2)
-  grid.set_terminal((2, 0))
+  start = (1, 21)
+  end = (55, 15)
+  grid.set_terminal(end)
   # print()
-  print(dijkstra(start, grid)[1][(2, 0)])
+  prev_nodes, distances = dijkstra(start, grid)
+  if end not in distances or distances[end] >= sys.maxsize:
+    print("what")
+  else:
+    path = get_traversal(prev_nodes, start, end)
+    print(distances[end])
+    grid.show_traversal(path)
 
