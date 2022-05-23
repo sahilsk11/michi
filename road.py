@@ -5,7 +5,7 @@ import sys
 def valid_moves(pos, grid):
   out = []
 
-  rows = [pos[0]-1, pos[0], pos[0]+1]
+  rows = [pos[0], pos[0]+1]
   cols = [pos[1]-1, pos[1], pos[1]+1]
   for r in rows:
     for c in cols:
@@ -33,14 +33,12 @@ def traverse(pos, grid, visited={}):
   (shortest_len, shortest_path, next_move) = (None, None, None)
   for m in moves:
     l, path = traverse(m, grid, visited)
-    print("option", pos, m, l, path)
     if l != None:
       l += dist(pos, m)
       if shortest_len is None or l < shortest_len:
         shortest_len = l
         shortest_path = path.copy()
         next_move = m
-  print("picked", pos, next_move, shortest_len, shortest_path)
   
   if shortest_path is None:
     return (None, None)
@@ -106,8 +104,8 @@ def get_traversal(prev_nodes, start, end):
 if __name__ == "__main__":
   grid = Grid()
 
-  start = (1, 21)
-  end = (55, 15)
+  start = (1, 220)
+  end = (270, 160)
   grid.set_terminal(end)
   # print()
   prev_nodes, distances = dijkstra(start, grid)

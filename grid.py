@@ -8,8 +8,8 @@ valid_space = "o"
 terminal_space = "^"
 visited_space = "x"
 
-x_bounds = (0, 60)
-y_bounds = (0, 30)
+x_bounds = (0, 270)
+y_bounds = (0, 250)
 
 # def upper(x):
 #   return (-(1/4)*(x-4)**2) + 4
@@ -18,10 +18,10 @@ y_bounds = (0, 30)
 #   return (-(1/3)*(x-4)**2) + 2
 
 def upper(x):
-  return 10*np.cos(0.2*x)+17
+  return 100*np.cos(0.05*x)+130
 
 def lower(x):
-  return 10*np.cos(0.2*x)+10
+  return 100*np.cos(0.05*x)+100
 
 def plot_grid():
   x_range = range(x_bounds[0], x_bounds[1]+1)
@@ -76,7 +76,8 @@ class Grid:
     out = []
     for i in range(len(self.grid)):
       for j in range(len(self.grid[i])):
-        out.append((i, j))
+        if self.get_position((i, j)) != invalid_space:
+          out.append((i, j))
     return out
 
 
