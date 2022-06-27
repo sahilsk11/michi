@@ -3,27 +3,33 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import numpy as np
 
-invalid_space = "#"
+invalid_space = "."
 valid_space = "o"
 terminal_space = "^"
 visited_space = "x"
 
-x_bounds = (0, 270)
-y_bounds = (0, 250)
+def calc_start_end(scale):
+  start = (1, int(scale+scale*(3/2))-1)
+  end = (int(2*math.pi / (2/scale)), int(scale+scale*(3/2))-1)
+  return (start, end)
 
-# def upper(x):
-#   return (-(1/4)*(x-4)**2) + 4
+def plot_grid(n):
+  u = n * (3/2)
+  l = n
+  w = 2/n
 
-# def lower(x):
-#   return (-(1/3)*(x-4)**2) + 2
+  def upper(x):
+    return n*np.cos(w*x)+u
 
-def upper(x):
-  return 100*np.cos(0.05*x)+130
+  def lower(x):
+    return n*np.cos(w*x)+l
 
-def lower(x):
-  return 100*np.cos(0.05*x)+100
+  x_limit = int(2*math.pi / w)
+  y_limit = int(n + u)
 
-def plot_grid():
+  x_bounds = (0, x_limit)
+  y_bounds = (0, y_limit)
+
   x_range = range(x_bounds[0], x_bounds[1]+1)
   y_range = range(y_bounds[0], y_bounds[1]+1)
 
@@ -31,9 +37,7 @@ def plot_grid():
   for y in y_range:
     grid.append([])
     for x in x_range:
-      u = upper(x)
-      l = lower(x)
-      if y >= l and y <= u:
+      if y >= lower(x) and y <= upper(x):
         grid[y].append(valid_space)
       else:
         grid[y].append(invalid_space)
@@ -48,21 +52,12 @@ def print_arr(arr):
     print("]")
 
 class Grid:
-  def __init__(self):
-    # v = valid_space
-    # x = invalid_space
-    # t = terminal_space
-    # g = [
-    #   [v, x, x, x],
-    #   [x, v, x, x],
-    #   [t, x, t, x]
-    # ]
+  def __init__(self, scale=None, grid=None):
+    if grid is None:
+      grid = plot_grid(scale)
+
+    self.grid = self.rotate(grid)
     
-
-    g = plot_grid()
-
-    self.grid = self.rotate(g)
-
 
   def rotate(self, grid):
     g = []
@@ -72,7 +67,7 @@ class Grid:
         g[j].append(grid[len(grid)-i-1][j])
     return g
 
-  def list_nodes(self):
+  def list_open_nodes(self):
     out = []
     for i in range(len(self.grid)):
       for j in range(len(self.grid[i])):
@@ -86,7 +81,7 @@ class Grid:
 
   def get_position(self, pos):
     if not self.is_valid(pos):
-      return None
+      return invalid_space
     return self.grid[pos[0]][pos[1]]
 
   def set_position(self, pos, val):
@@ -105,8 +100,23 @@ class Grid:
   def print(self):
     print_arr(self.grid)
 
-  def show_traversal(self, traversed_path):
-    x = np.arange(x_bounds[0], x_bounds[1], 0.1)
+  def show_traversal(self, scale, traversed_path):
+    u = scale * (3/2)
+    l = scale
+    w = 2/scale
+
+    def upper(x):
+      return scale*np.cos(w*x)+u
+
+    def lower(x):
+      return scale*np.cos(w*x)+l
+
+
+    x_limit = int(2*math.pi / w)
+
+    x_bounds = (0, x_limit)
+
+    x = np.arange(x_bounds[0], x_bounds[1]+1, 0.1)
     y1 = lower(x)
     y2 = upper(x)
 
@@ -132,6 +142,4 @@ class Grid:
     plt.scatter(x, y)
 
     plt.show()
-
-    print(len(traversed_path))
     
