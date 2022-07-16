@@ -1,4 +1,4 @@
-from road import *
+from path import *
 import grid
 
 def test_calculate_angle():

@@ -9,14 +9,14 @@ terminal_space = "^"
 visited_space = "x"
 
 def calc_start_end(scale):
-  start = (1, int(scale+scale*(3/2))-1)
-  end = (int(2*math.pi / (2/scale)), int(scale+scale*(3/2))-1)
+  start = (1, int(2*scale+1))
+  end = (int(2*math.pi / (1/scale)), int(2*scale+1))
   return (start, end)
 
 def plot_grid(n):
   u = n * (3/2)
   l = n
-  w = 2/n
+  w = 1/n
 
   def upper(x):
     return n*np.cos(w*x)+u
@@ -103,7 +103,7 @@ class Grid:
   def show_traversal(self, scale, traversed_path):
     u = scale * (3/2)
     l = scale
-    w = 2/scale
+    w = 1/scale
 
     def upper(x):
       return scale*np.cos(w*x)+u
